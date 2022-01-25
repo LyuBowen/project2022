@@ -1,0 +1,17 @@
+<?nsuri psl?>
+<?render-egx picto/reflective.egx?>
+<_>
+<project title="ACME">
+	<task name="Analysis"/>
+	<person name="Bob"/>
+	<assignment person="Bob" task="Analysis"/>
+</project>
+
+<folder name="My Documents">
+    <file name = "myphoto.jpg"/>
+    <shortcut name="shortcut.lnk" target="myphoto.jpg"/>
+</folder>
+<folder name="Downloads">
+    <shortcut name="myphoto.lnk" target="myphoto.jpg"/>
+</folder>
+</_>

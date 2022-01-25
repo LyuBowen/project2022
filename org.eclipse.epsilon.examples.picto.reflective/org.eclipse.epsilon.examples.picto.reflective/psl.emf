@@ -1,0 +1,33 @@
+@namespace(uri="psl")
+package psl;
+
+@picto.diagram(title="name")
+class Project {
+	attr String name;
+	val Task[*] tasks;
+	val Person[*] people;
+	val Assignment[*] assignments;
+}
+
+@picto.node(label="name", color="green")
+class Task {
+	attr String name;
+}
+
+@picto.node(label="name", color="yellow")
+class Person {
+	attr String name;
+}
+
+@picto.link(label="name", source="person", target="task")
+class Assignment {
+	attr String name;
+	ref Person person;
+	ref Task task;
+}
+
+
+
+
+
+
