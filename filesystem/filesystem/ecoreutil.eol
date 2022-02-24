@@ -1,0 +1,120 @@
+operation Any myClass() {
+	return self.eClass().name;
+}
+operation Any getNodeAttributes() {
+	return self.eClass().getEAllAttributes().collect(a|a.name + " = " + self.eGet(a)).concat("\\n");
+}
+
+operation Any getFolderLayout() {
+	 var files  =  self.eClass().getEAllReferences().selectOne(e|e.name="files");
+	 return  self.eClass().getAnnotationValue2(files,"picto.compartment", "layout");
+}
+operation Any getFiles(){
+	return self.eClass().getEAllReferences().selectOne(e|e.name="files");
+}
+operation Any isFolder() {
+	return self.eClass().name="Folder";
+}
+
+operation Any getReferenced() {
+
+	if (self.isUndefined()) return Sequence{};
+
+	var c = self.eClass();
+	var referenced : Sequence;
+	for (r in c.getEAllReferences()) {
+		referenced.add(Sequence{self.eGet(r).asSequence(), r});
+	}
+	return referenced;
+}
+
+operation Any isNode() {
+	return self.eClass().isAnnotatedAs("picto.node");
+}
+
+operation Any isLink() {
+	return self.eClass().isAnnotatedAs("picto.link");
+}
+
+operation Any getLabel() {
+	var attr = self.eClass().getAnnotationValue("picto.node", "label");
+	return self.eGet(self.eClass().getEStructuralFeature(attr));
+}
+
+operation Any getLayout() {
+	var attr = self.eClass().getAnnotationValue("picto.compartment", "layout");
+	return self.eGet(self.eClass().getEStructuralFeature(attr));
+}
+
+operation Any getTarget() {
+	
+	var c = self.eClass();
+	var referenced : Sequence;
+	for (r in c.getEAllReferences()) {
+		if(c.isAnnotatedAs2(r,"picto.link")){
+			return self.eGet(r);
+		}
+	}
+	return null;
+}
+operation Any isAnnotatedAs(name: String) : Boolean {
+	return self.getAnnotation(name).isDefined();
+}
+operation Any isAnnotatedAs2(taget: Any,name: String) : Boolean {
+	return taget.getAnnotation(name).isDefined();
+}
+operation Any getAnnotationValue2(taget: Any,name: String, detail: String) : Any {
+	var ann = taget.eAnnotations.selectOne(a|a.source = name);
+	var det;
+
+	if (ann.isDefined()) {
+		det = ann.details.selectOne(d|d.key = detail);
+	}
+
+	if (det.isDefined()) {
+		return det.value;
+	}
+	else if (taget.eClass().name = "EClass") {
+		for (s in taget.eSuperTypes) {
+			var sann = s.getAnnotationValue(name, detail);
+			if (sann.isDefined()) {
+				return sann;
+			}
+		}
+	}
+	return det;	
+}
+operation Any getAnnotationValue(name: String, detail: String) : Any {
+	var ann = self.eAnnotations.selectOne(a|a.source = name);
+	var det;
+
+	if (ann.isDefined()) {
+		det = ann.details.selectOne(d|d.key = detail);
+	}
+
+	if (det.isDefined()) {
+		return det.value;
+	}
+	else if (self.eClass().name = "EClass") {
+		for (s in self.eSuperTypes) {
+			var sann = s.getAnnotationValue(name, detail);
+			if (sann.isDefined()) {
+				return sann;
+			}
+		}
+	}
+	return det;	
+}
+
+operation Any getAnnotation(name : String) : Any {
+	var ann = self.eAnnotations.selectOne(a|a.source = name);
+	
+	if (self.eClass().name = "EClass" and ann.isUndefined()) {
+		for (s in self.eSuperTypes) {
+			var sann = s.getAnnotation(name);
+			if (sann.isDefined()) return sann;
+		}
+	}
+	
+	return ann;
+}
