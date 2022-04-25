@@ -1,0 +1,66 @@
+[%import "ecoreutil.eol";%]
+digraph G {
+	[%if(firstFolder.getFolderLayout()="list"){%]
+			node [shape=plaintext]
+		[%
+		var port = 1;
+		for (e in M.allContents.select(e|e.isFolder())){%]
+		n[%=loopCount%][label=<<table>
+		<tr><td>[%=e.getLabel()%]</td></tr>
+		[%for (r in e.getReferenced()) {%]
+		[%for (v in r.at(0)) {%]
+		<tr><td port="p[%=port%]">[%=v.getLabel()%]</td></tr>
+		[%
+		port++;
+		}%]
+		[%}%]
+		</table>>]
+		[%}%]
+		
+		[%
+		var portSource = 1;
+		for (e in M.allContents.select(e|e.isFolder())){
+		var nodeSource=loopCount;
+		for (r in e.getReferenced()) {
+		for (v in r.at(0)) {
+			var target = v.getLinkTarget();
+			if(target!=null){
+				var portTarget=M.allContents.select(et|not et.isFolder()).indexOf(target)+1;
+				var nodeTarget=0;
+				for (en in M.allContents.select(en|en.isFolder())){
+					var enr = en.getReferenced();
+					if(enr.at(0).at(0).includes(target)){
+						nodeTarget =loopCount; 
+					}%]
+				[%}%]
+				[%if(nodeSource != nodeTarget){%]
+				n[%=nodeSource%]:p[%=portSource%]->n[%=nodeTarget%]:p[%=portTarget%]
+				[%}%]
+			[%}
+			portSource++;
+		}
+		}
+		}%]
+	[%}else{%]
+		
+		[%for (e in M.allContents.select(e|e.isFolder())){%]
+			subgraph cluster_[%=loopCount%] {
+				style=filled;
+				color="lightgrey";
+				node[style=filled,color=white];
+				label ="[%=e.getLabel()%]";
+				[%for (r in e.getReferenced()) {%]
+				[%for (v in r.at(0)) {%]
+				"[%=v.getLabel()%]";
+				[%}%]
+				[%for (vr in r.at(0)) {%]
+				[%var target = vr.getLinkTarget();
+				  if(target!=null){	
+				%]
+				"[%=vr.getLabel()%]"->"[%=target.getLabel()%]";
+				[%}}%]
+				[%}%]
+			}
+		[%}%]
+	[%}%]
+}

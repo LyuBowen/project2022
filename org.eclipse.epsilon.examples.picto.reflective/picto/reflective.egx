@@ -1,0 +1,35 @@
+import "ecoreutil.eol";
+
+pre {
+	var diagramElements = M.allContents.select(e|e.isDiagram());
+	
+	var firstFolder = M.allContents.selectOne(e|e.isNode() and e.getClassEAllReferences().selectOne(a|a.isAnnotatedAs("picto.compartment"))!=null);
+	
+	var filesystem = firstFolder.isDefined()?Sequence{firstFolder}:Sequence{};
+}
+
+
+rule Filesystem2View 
+	transform f in:filesystem{
+	
+	template : "filesystem.egl"
+
+	parameters : Map {
+		"firstFolder" = firstFolder,
+	
+		"path" = Sequence{"Diagrams", "fileSystem"},
+		"format" = "graphviz-dot"
+	}
+}
+
+rule Diagram2View
+	transform d in: diagramElements {
+	
+	template : "diagram.egl"
+	
+	parameters : Map {
+		"path" = Sequence{"Diagrams", d.getTitle()},
+		"format" = "graphviz-dot"
+	}
+	
+}

@@ -1,0 +1,20 @@
+@namespace(uri="filesystem",prefix="")
+package filesystem;
+
+
+@picto.node(label= "name")
+class Folder {
+	attr String name;
+	@picto.compartment(layout="list")
+	val File[*] files;
+	
+}
+@picto.node(label="name")
+class File {
+	attr String name ;
+}
+
+class Shortcut extends File {
+	@picto.link
+	ref File target;
+}

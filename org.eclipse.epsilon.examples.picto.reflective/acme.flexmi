@@ -1,0 +1,7 @@
+<?nsuri psl?>
+<?render-egx picto/reflective.egx?>
+<project title="ACME">
+	<task name="Analysis"/>
+	<person name="Bob"/>
+	<assignment person="Bob" task="Analysis"/>
+</project>

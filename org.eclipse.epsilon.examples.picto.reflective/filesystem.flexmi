@@ -1,0 +1,11 @@
+<?nsuri filesystem?>
+<?render-egx picto/reflective.egx?>
+<_>
+	<folder name="My Documents">
+		<file name="myphoto.jpg"/>
+		<shortcut name="shortcut.lnk" target="myphoto.jpg"/>
+	</folder>
+	<folder name="Downloads">
+		<shortcut name="myphoto.lnk" target="myphoto.jpg"/>
+	</folder>
+</_>
